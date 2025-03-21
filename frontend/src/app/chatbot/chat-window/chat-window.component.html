@@ -1,0 +1,16 @@
+<div class="p-4 max-w-2xl mx-auto">
+    <div class="bg-white shadow-md rounded-lg p-4 h-[400px] overflow-y-auto">
+      <div *ngFor="let msg of messages">
+        <div [ngClass]="msg.sender === 'user' ? 'text-right' : 'text-left'">
+          <p class="p-2 my-2 inline-block rounded bg-gray-100" [ngClass]="msg.sender === 'user' ? 'bg-blue-100' : 'bg-gray-200'">
+            {{ msg.text }}
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="mt-4 flex">
+      <input type="text" class="flex-1 border rounded-l p-2" [(ngModel)]="userInput" (keyup.enter)="sendMessage()">
+      <button class="bg-blue-500 text-white px-4 py-2 rounded-r" (click)="sendMessage()">Send</button>
+    </div>
+  </div>
+  

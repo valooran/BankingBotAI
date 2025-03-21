@@ -1,0 +1,9 @@
+<div class="max-w-md mx-auto mt-10 p-4 shadow-md bg-white rounded">
+    <h2 class="text-xl font-bold mb-4">Login</h2>
+    <form (submit)="login()">
+      <input class="w-full p-2 mb-2 border" type="email" [(ngModel)]="email" name="email" placeholder="Email">
+      <input class="w-full p-2 mb-4 border" type="password" [(ngModel)]="password" name="password" placeholder="Password">
+      <button class="bg-blue-600 text-white px-4 py-2 w-full rounded" type="submit">Login</button>
+    </form>
+  </div>
+  
