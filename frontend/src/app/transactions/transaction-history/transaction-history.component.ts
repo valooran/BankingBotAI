@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 
 @Component({
@@ -7,5 +8,17 @@ import { Component } from '@angular/core';
   styleUrl: './transaction-history.component.css'
 })
 export class TransactionHistoryComponent {
+  transactions: any[] = [];
 
+  constructor(private http: HttpClient) {}
+  
+  ngOnInit() {
+    const token = localStorage.getItem('token');
+    this.http.get('http://localhost:8000/api/transactions', {
+      headers: { Authorization: `Bearer ${token}` }
+    }).subscribe((data: any) => {
+      this.transactions = data;
+    });
+  }
+  
 }
