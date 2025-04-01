@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ABC Bank Assistant</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+    }
+
+    .chat-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 350px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.15);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      font-size: 14px;
+    }
+
+    .chat-header {
+      background: #007bff;
+      color: white;
+      padding: 12px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .chatbox {
+      height: 400px;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .chatbox p {
+      margin: 6px 0;
+    }
+
+    .chatbox strong {
+      color: #007bff;
+    }
+
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      font-size: 14px;
+    }
+
+    .chat-input button {
+      padding: 10px 15px;
+      background: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .reset-button {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      border-top: 1px solid #ccc;
+    }
+
+    #typing-indicator {
+      font-style: italic;
+      color: gray;
+      padding: 6px 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="chat-container">
+    <div class="chat-header">ABC Bank Assistant</div>
+    <div class="chatbox" id="chatbox">
+      <p><strong>Bot:</strong> Hello! How can I assist you with your banking queries?</p>
+    </div>
+    <div id="typing-indicator">Bot is typing...</div>
+    <div class="chat-input">
+      <input type="text" id="userInput" placeholder="Type your message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+    <button class="reset-button" onclick="resetChat()">🔄 Reset Chat</button>
+  </div>
+
+  <script>
+    function sendMessage() {
+      const input = document.getElementById("userInput");
+      const message = input.value.trim();
+      if (!message) return;
+
+      const chatbox = document.getElementById("chatbox");
+      chatbox.innerHTML += `<p><strong>You:</strong> ${message}</p>`;
+      input.value = "";
+
+      const typingIndicator = document.getElementById("typing-indicator");
+      typingIndicator.style.display = "block";
+
+      fetch("/chatbot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: message })
+      })
+      .then(res => res.json())
+      .then(data => {
+        typingIndicator.style.display = "none";
+
+        const response = data.response;
+        const p = document.createElement("p");
+        p.innerHTML = "<strong>Bot:</strong> ";
+        chatbox.appendChild(p);
+
+        let i = 0;
+        const typing = setInterval(() => {
+          if (i < response.length) {
+            p.innerHTML += response.charAt(i);
+            i++;
+            chatbox.scrollTop = chatbox.scrollHeight;
+          } else {
+            clearInterval(typing);
+          }
+        }, 25); // Typing speed (ms per character)
+      });
+    }
+
+    function resetChat() {
+      fetch("/reset", { method: "POST" })
+        .then(res => res.json())
+        .then(data => {
+          const chatbox = document.getElementById("chatbox");
+          chatbox.innerHTML = `<p><strong>Bot:</strong> ${data.response}</p>`;
+        });
+    }
+
+    document.getElementById("userInput").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") sendMessage();
+    });
+  </script>
+
+</body>
+</html>
