@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 import { ChatWindowComponent } from './chatbot/chat-window/chat-window.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
@@ -8,12 +9,19 @@ import { TransactionHistoryComponent } from './transactions/transaction-history/
 import { AuthGuard } from './auth/auth.guard';
 
 
-const routes: Routes = [
+export const routes: Routes = [
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'dashboard', component: AccountSummaryComponent, canActivate: [AuthGuard] },
   { path: 'transfer', component: SelfTransferComponent, canActivate: [AuthGuard] },
   { path: 'history', component: TransactionHistoryComponent, canActivate: [AuthGuard] },
   { path: 'chat', component: ChatWindowComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: 'transactions', component: TransactionHistoryComponent, canActivate: [AuthGuard] }
 ];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule {}

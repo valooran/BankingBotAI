@@ -1,1 +1,7 @@
+<nav *ngIf="showNav()" class="bg-blue-600 text-white p-4 flex gap-4">
+    <a class="cursor-pointer hover:underline" [routerLink]="['/dashboard']">Dashboard</a>
+    <a class="cursor-pointer hover:underline" [routerLink]="['/transfer']">Transfer</a>
+    <a routerLink="/transactions" class="cursor-pointer hover:underline">Transactions</a>
+    <a class="cursor-pointer hover:underline" (click)="logout()">Logout</a>
+  </nav>
 <router-outlet></router-outlet>

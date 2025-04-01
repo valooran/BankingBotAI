@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
 import { ChatbotService } from '../chatbot.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-chat-window',
   templateUrl: './chat-window.component.html',
+  imports: [FormsModule, CommonModule]
 })
 export class ChatWindowComponent {
   messages: { sender: string, text: string }[] = [];

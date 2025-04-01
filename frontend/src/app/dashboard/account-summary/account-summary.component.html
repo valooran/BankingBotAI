@@ -1,9 +1,13 @@
-<div class="max-w-4xl mx-auto p-4">
-    <h2 class="text-2xl font-semibold mb-4">Account Summary</h2>
-    <div *ngIf="account">
-      <p><strong>Account Number:</strong> {{ account.account_number }}</p>
-      <p><strong>Balance:</strong> ${{ account.balance }}</p>
-      <p><strong>Account Type:</strong> {{ account.account_type }}</p>
-    </div>
+<div class="max-w-4xl mx-auto mt-6">
+  <h2 class="text-xl font-bold mb-4">Account Summary</h2>
+
+  <div *ngFor="let acc of accounts" class="border p-4 rounded shadow mb-4">
+    <p><strong>Account #:</strong> {{ acc.account_number }}</p>
+    <p><strong>Type:</strong> {{ acc.account_type }}</p>
+    <p><strong>Balance:</strong> ${{ acc.balance }}</p>
   </div>
-  
+
+  <div *ngIf="accounts.length === 0" class="text-center text-gray-600 mt-4">
+    No accounts found for this user.
+  </div>
+</div>
