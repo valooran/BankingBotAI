@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ABC Bank Assistant</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+    }
+
+    .chat-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #007bff;
+      color: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+    }
+
+    .chat-popup {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 350px;
+      max-height: 500px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.25);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 1000;
+    }
+
+    .chat-header {
+      background: #007bff;
+      color: white;
+      padding: 12px;
+      font-weight: bold;
+      text-align: center;
+      font-size: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .reset-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 0 10px;
+    }
+
+    .chatbox {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chatbox p {
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 12px;
+      max-width: 80%;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .chatbox .user {
+      align-self: flex-end;
+      background: #e0f7fa;
+      text-align: right;
+    }
+
+    .chatbox .bot {
+      align-self: flex-start;
+      background: #f1f1f1;
+    }
+
+    .typing-indicator {
+      display: none;
+      font-size: 14px;
+      margin: 5px 10px;
+      color: gray;
+    }
+
+    .typing-indicator span {
+      display: inline-block;
+      animation: blink 1.2s infinite;
+    }
+
+    .typing-indicator span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes blink {
+      0%, 80%, 100% { opacity: 0; }
+      40% { opacity: 1; }
+    }
+
+    .chat-input {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #ddd;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .chat-input button {
+      margin-left: 8px;
+      padding: 8px 12px;
+      background: #007bff;
+      border: none;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="chat-icon" onclick="toggleChat()">💬</div>
+
+<div class="chat-popup animate__animated" id="chatPopup">
+  <div class="chat-header">
+    <span>ABC Bank Assistant</span>
+    <button class="reset-btn" onclick="resetChat()">🔄</button>
+  </div>
+  <div class="chatbox" id="chatbox">
+    <p class="bot"><strong>Bot:</strong> Hello! How can I assist you with your banking queries?</p>
+  </div>
+  <div class="typing-indicator" id="typing-indicator">
+    <span>.</span><span>.</span><span>.</span>
+  </div>
+  <div class="chat-input">
+    <input type="text" id="userInput" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+  function toggleChat() {
+    const popup = document.getElementById("chatPopup");
+    if (popup.style.display === "none" || popup.style.display === "") {
+      popup.style.display = "flex";
+      popup.classList.add("animate__bounceInUp");
+    } else {
+      popup.style.display = "none";
+    }
+  }
+
+  function simulateTyping(message) {
+    const chatbox = document.getElementById("chatbox");
+    const typing = document.getElementById("typing-indicator");
+    typing.style.display = "block";
+
+    const botBubble = document.createElement("p");
+    botBubble.className = "bot";
+    botBubble.innerHTML = "<strong>Bot:</strong> ";
+    chatbox.appendChild(botBubble);
+    chatbox.scrollTop = chatbox.scrollHeight;
+
+    let i = 0;
+    const speed = 25;
+    const typeInterval = setInterval(() => {
+      if (i < message.length) {
+        botBubble.innerHTML += message.charAt(i);
+        i++;
+        chatbox.scrollTop = chatbox.scrollHeight;
+      } else {
+        clearInterval(typeInterval);
+        typing.style.display = "none";
+      }
+    }, speed);
+  }
+
+  function sendMessage() {
+    const input = document.getElementById("userInput");
+    const userMessage = input.value.trim();
+    if (!userMessage) return;
+
+    const chatbox = document.getElementById("chatbox");
+    const userBubble = document.createElement("p");
+    userBubble.className = "user";
+    userBubble.innerHTML = `<strong>You:</strong> ${userMessage}`;
+    chatbox.appendChild(userBubble);
+    chatbox.scrollTop = chatbox.scrollHeight;
+
+    document.getElementById("typing-indicator").style.display = "block";
+
+    fetch("http://127.0.0.1:5000/chatbot", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: userMessage })
+    })
+    .then(res => res.json())
+    .then(data => {
+      simulateTyping(data.response);
+    })
+    .catch(() => {
+      simulateTyping("Sorry, I'm having trouble responding right now.");
+    });
+
+    input.value = "";
+  }
+
+  // ENTER key support
+  document.getElementById("userInput").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      sendMessage();
+    }
+  });
+
+  // RESET CHAT function
+  function resetChat() {
+    fetch("http://127.0.0.1:5000/reset", {
+      method: "POST"
+    })
+    .then(res => res.json())
+    .then(data => {
+      const chatbox = document.getElementById("chatbox");
+      chatbox.innerHTML = "";
+      simulateTyping(data.response);
+    })
+    .catch(() => {
+      simulateTyping("⚠️ Couldn't reset the chat. Please try again.");
+    });
+  }
+</script>
+
+</body>
+</html>
