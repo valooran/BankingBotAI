@@ -1,15 +1,39 @@
-<div class="p-4 max-w-2xl mx-auto">
-    <div class="bg-white shadow-md rounded-lg p-4 h-[400px] overflow-y-auto">
-      <div *ngFor="let msg of messages">
-        <div [ngClass]="msg.sender === 'user' ? 'text-right' : 'text-left'">
-          <p class="p-2 my-2 inline-block rounded bg-gray-100" [ngClass]="msg.sender === 'user' ? 'bg-blue-100' : 'bg-gray-200'">
-            {{ msg.text }}
-          </p>
-        </div>
-      </div>
-    </div>
-    <div class="mt-4 flex">
-      <input type="text" class="flex-1 border rounded-l p-2" [(ngModel)]="userInput" (keyup.enter)="sendMessage()">
-      <button class="bg-blue-500 text-white px-4 py-2 rounded-r" (click)="sendMessage()">Send</button>
+<!-- Toggle button -->
+<div class="fixed bottom-4 right-4 z-50">
+  <button
+    (click)="toggleChat()"
+    class="bg-blue-600 text-white p-3 rounded-full shadow-lg"
+    aria-label="Chat"
+  >
+    💬
+  </button>
+</div>
+
+<!-- Chat Window -->
+<div
+  *ngIf="isOpen"
+  class="fixed bottom-20 right-4 z-50 bg-white border rounded-lg shadow-lg w-80 max-h-[32rem] flex flex-col"
+>
+  <div class="bg-blue-600 text-white px-4 py-2 font-bold rounded-t-lg">
+    🧠 Banking Assistant
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-3">
+    <div *ngFor="let msg of messages" class="mb-2">
+      <div class="font-semibold">{{ msg.sender }}</div>
+      <div>{{ msg.text }}</div>
     </div>
   </div>
+
+  <div class="flex items-center p-2 border-t">
+    <input
+      [(ngModel)]="userInput"
+      (keydown.enter)="sendMessage()"
+      class="flex-1 border rounded p-1 mr-2"
+      placeholder="Ask me something..."
+    />
+    <button (click)="sendMessage()" class="bg-blue-600 text-white px-3 py-1 rounded">
+      Send
+    </button>
+  </div>
+</div>

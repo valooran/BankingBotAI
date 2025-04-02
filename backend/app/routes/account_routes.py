@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Header
+from fastapi import APIRouter, Depends, HTTPException, Header, Query
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.account import Account
@@ -6,7 +6,7 @@ from app.models.user import User
 from app.models.schemas import AccountCreate, FundTransfer
 from jose import jwt, JWTError
 from app.auth import SECRET_KEY, ALGORITHM
-from app.models import Transaction
+from app.models.transaction import Transaction
 from datetime import datetime
 
 router = APIRouter(prefix="/api/account", tags=["Account"])
@@ -78,16 +78,41 @@ def transfer_funds(transfer: FundTransfer, token: str = Header(...), db: Session
     return {"message": "Transfer successful", "from": from_acc.account_number, "to": to_acc.account_number}
 
 @router.get("/transactions")
-def get_transactions(token: str = Header(...), db: Session = Depends(get_db)):
+def get_transactions(
+    token: str = Header(...),
+    db: Session = Depends(get_db),
+    from_date: datetime = Query(None),
+    to_date: datetime = Query(None),
+    account_number: str = Query(None),
+    page: int = Query(1),
+    limit: int = Query(10)
+):
     user_id = get_user_id_from_token(token, db)
+    user_accounts = db.query(Account.account_number).filter(Account.user_id == user_id).subquery()
 
-    # Get the user's account numbers
-    account_numbers = db.query(Account.account_number).filter(Account.user_id == user_id)
+    query = db.query(Transaction).filter(
+        (Transaction.from_account.in_(user_accounts)) |
+        (Transaction.to_account.in_(user_accounts))
+    )
 
-    # Get transactions where the user is either sender or receiver
-    transactions = db.query(Transaction).filter(
-        (Transaction.from_account.in_(account_numbers)) |
-        (Transaction.to_account.in_(account_numbers))
-    ).order_by(Transaction.timestamp.desc()).all()
+    if from_date:
+        query = query.filter(Transaction.timestamp >= from_date)
+    if to_date:
+        query = query.filter(Transaction.timestamp <= to_date)
+    if account_number:
+        if account_number.strip():
+            query = query.filter(
+                (Transaction.from_account == account_number) |
+                (Transaction.to_account == account_number)
+            )
 
-    return transactions
+    total = query.count()
+    transactions = query.order_by(Transaction.timestamp.desc()).offset((page - 1) * limit).limit(limit).all()
+
+    return {
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "transactions": transactions
+    }
+

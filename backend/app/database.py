@@ -2,7 +2,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# ⚠️ Replace with your actual MySQL username, password, and database name
 DATABASE_URL = "mysql+mysqlconnector://admin:Aadumon%40696969@localhost/bankingbot"
 
 engine = create_engine(DATABASE_URL)

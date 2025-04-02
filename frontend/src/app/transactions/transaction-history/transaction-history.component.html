@@ -5,6 +5,13 @@
     No transactions found.
   </div>
 
+  <div class="flex gap-4 mb-4">
+    <input type="date" [(ngModel)]="filters.from_date" class="p-2 border rounded" placeholder="From Date" />
+    <input type="date" [(ngModel)]="filters.to_date" class="p-2 border rounded" placeholder="To Date" />
+    <input type="text" [(ngModel)]="filters.account_number" class="p-2 border rounded" placeholder="Account #" />
+    <button (click)="loadTransactions()" class="bg-blue-600 text-white px-4 rounded">Filter</button>
+  </div>
+
   <table *ngIf="transactions.length > 0" class="w-full text-sm border border-gray-300">
     <thead class="bg-gray-100">
       <tr>
@@ -23,4 +30,18 @@
       </tr>
     </tbody>
   </table>
+
+  <div class="flex justify-between mt-4">
+    <button (click)="onPageChange(false)" [disabled]="filters.page <= 1" class="bg-gray-300 px-4 py-1 rounded">
+      Prev
+    </button>
+    <button (click)="onPageChange(true)" [disabled]="filters.page * filters.limit >= total" class="bg-gray-300 px-4 py-1 rounded">
+      Next
+    </button>
+  </div>
+
+  <p class="text-center mt-2 text-sm text-gray-600">
+    Page {{ filters.page }} | Showing {{ transactions.length }} of {{ total }} transactions
+  </p>
+  
 </div>
