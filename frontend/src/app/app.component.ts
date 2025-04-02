@@ -5,10 +5,11 @@ import { AuthService } from './auth/auth.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { ChatWindowComponent } from './chatbot/chat-window/chat-window.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,FormsModule, CommonModule,RouterModule],
+  imports: [RouterOutlet,FormsModule, CommonModule,RouterModule, ChatWindowComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

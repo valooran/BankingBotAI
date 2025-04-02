@@ -37,9 +37,11 @@ export class AccountService {
     });
   }
 
-  getTransactions() {
+  getTransactions(filters: any = {}) {
+    const params: any = { ...filters };
     return this.http.get(`${this.apiUrl}/transactions`, {
-      headers: this.getHeaders()
-    });
+      headers: this.getHeaders(),
+      params
+  });
   }
 }

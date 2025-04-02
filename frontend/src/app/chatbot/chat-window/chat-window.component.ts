@@ -1,28 +1,41 @@
 import { Component } from '@angular/core';
 import { ChatbotService } from '../chatbot.service';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-chat-window',
+  imports: [FormsModule, CommonModule],
   templateUrl: './chat-window.component.html',
-  imports: [FormsModule, CommonModule]
+  styleUrls: ['./chat-window.component.css']
 })
 export class ChatWindowComponent {
-  messages: { sender: string, text: string }[] = [];
-  userInput = '';
-  
+  messages: { sender: string; text: string }[] = [];
+  userInput: string = '';
+  isOpen: boolean = false;
+
   constructor(private chatbotService: ChatbotService) {}
 
-  sendMessage() {
-    if (!this.userInput.trim()) return;
+  toggleChat(): void {
+    this.isOpen = !this.isOpen;
+  }
 
-    const userMsg = this.userInput;
-    this.messages.push({ sender: 'user', text: userMsg });
-    this.userInput = '';
+  sendMessage(): void {
+    const message = this.userInput.trim();
+    if (!message) return;
 
-    this.chatbotService.sendMessage(userMsg).subscribe((res: any) => {
-      this.messages.push({ sender: 'bot', text: res.reply });
+    this.messages.push({ sender: 'You', text: message });
+
+    this.chatbotService.sendMessage(message).subscribe({
+      next: (res) => {
+        this.messages.push({ sender: 'Bot', text: res.reply });
+      },
+      error: (err) => {
+        const msg = err.error?.detail || 'An error occurred';
+        this.messages.push({ sender: 'Bot', text: `⚠️ ${msg}` });
+      }
     });
+
+    this.userInput = '';
   }
 }

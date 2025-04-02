@@ -1,0 +1,17 @@
+:host {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 1000;
+  }
+  .chat-window {
+    width: 20rem;
+    max-height: 32rem;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
+  
