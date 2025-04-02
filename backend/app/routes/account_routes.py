@@ -6,6 +6,8 @@ from app.models.user import User
 from app.models.schemas import AccountCreate, FundTransfer
 from jose import jwt, JWTError
 from app.auth import SECRET_KEY, ALGORITHM
+from app.models import Transaction
+from datetime import datetime
 
 router = APIRouter(prefix="/api/account", tags=["Account"])
 
@@ -63,6 +65,29 @@ def transfer_funds(transfer: FundTransfer, token: str = Header(...), db: Session
 
     from_acc.balance -= transfer.amount
     to_acc.balance += transfer.amount
+    
+    transaction = Transaction(
+        from_account=transfer.from_account,
+        to_account=transfer.to_account,
+        amount=transfer.amount,
+        timestamp=datetime.utcnow()
+    )
+    db.add(transaction)
 
     db.commit()
     return {"message": "Transfer successful", "from": from_acc.account_number, "to": to_acc.account_number}
+
+@router.get("/transactions")
+def get_transactions(token: str = Header(...), db: Session = Depends(get_db)):
+    user_id = get_user_id_from_token(token, db)
+
+    # Get the user's account numbers
+    account_numbers = db.query(Account.account_number).filter(Account.user_id == user_id)
+
+    # Get transactions where the user is either sender or receiver
+    transactions = db.query(Transaction).filter(
+        (Transaction.from_account.in_(account_numbers)) |
+        (Transaction.to_account.in_(account_numbers))
+    ).order_by(Transaction.timestamp.desc()).all()
+
+    return transactions

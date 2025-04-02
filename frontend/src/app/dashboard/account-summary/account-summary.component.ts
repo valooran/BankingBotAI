@@ -1,21 +1,23 @@
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { AccountService } from '../../account/account.service';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-account-summary',
-  imports: [],
+  imports: [FormsModule, CommonModule],
   templateUrl: './account-summary.component.html',
   styleUrl: './account-summary.component.css'
 })
 export class AccountSummaryComponent {
-  account: any;
+  accounts: any[] = [];
 
-  constructor(private http: HttpClient) {}
-  
+  constructor(private accountService: AccountService) {}
+
   ngOnInit() {
-    const token = localStorage.getItem('token');
-    this.http.get('http://localhost:8000/api/account', {
-      headers: { Authorization: `Bearer ${token}` }
-    }).subscribe(data => this.account = data);
+    this.accountService.getSummary().subscribe({
+      next: (res: any) => this.accounts = res,
+      error: () => alert('Failed to load account summary')
+    });
   }
 }
