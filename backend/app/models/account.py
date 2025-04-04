@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, Float, String, ForeignKey
+from sqlalchemy.orm import relationship
 from app.database import Base
 
 class Account(Base):
