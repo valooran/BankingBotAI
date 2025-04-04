@@ -20,6 +20,10 @@ export class ChatWindowComponent {
     this.isOpen = !this.isOpen;
   }
 
+  clearMessages() {
+    this.messages = [];
+  }
+
   sendMessage(): void {
     const message = this.userInput.trim();
     if (!message) return;

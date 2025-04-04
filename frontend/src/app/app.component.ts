@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ChatWindowComponent } from './chatbot/chat-window/chat-window.component';
+import { ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -15,10 +16,11 @@ import { ChatWindowComponent } from './chatbot/chat-window/chat-window.component
 })
 export class AppComponent {
   title = 'frontend';
-  constructor(private auth: AuthService, private router: Router) {}
-
+  constructor(public auth: AuthService, private router: Router) {}
+  @ViewChild(ChatWindowComponent) chatWindow!: ChatWindowComponent;
   logout() {
     this.auth.logout();
+    this.chatWindow.clearMessages();
     this.router.navigate(['/login']);
   }
 

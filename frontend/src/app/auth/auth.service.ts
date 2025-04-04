@@ -46,4 +46,11 @@ export class AuthService {
     }
     return null;
   }
+
+  isLoggedIn(): boolean {
+    if (!isPlatformBrowser(this.platformId)) {
+      return false;
+    }
+    return !!localStorage.getItem('token');
+  }
 }
