@@ -1,15 +1,21 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-      {
-        "name": "Debug FastAPI",
-        "type": "python",
-        "request": "launch",
-        "program": "${workspaceFolder}/backend/app/main.py",
-        "console": "integratedTerminal",
-        "env": {
-          "PYTHONPATH": "${workspaceFolder}/backend"
-        }
-      }
-    ]
-  }
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "FastAPI (Uvicorn)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "app.main:app",
+        "--reload"
+      ],
+      "console": "integratedTerminal",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}"
+      },
+      "python": "${workspaceFolder}/backend/venv/Scripts/python.exe",
+      "cwd": "${workspaceFolder}/backend"
+    }
+  ]
+}

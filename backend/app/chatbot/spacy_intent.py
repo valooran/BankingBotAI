@@ -6,7 +6,7 @@ nlp = spacy.load("en_core_web_sm")
 intent_keywords = {
     "check_balance": ["balance", "how much", "show funds", "available money"],
     "transfer_money": ["transfer", "send", "move money", "send funds"],
-    "show_transactions": ["transactions", "recent activity", "history", "statement"],
+    "view_transactions": ["transactions", "recent activity", "history", "statement"],
     "greeting": ["hi", "hello", "hey"],
     "goodbye": ["bye", "goodbye", "see you"]
 }
