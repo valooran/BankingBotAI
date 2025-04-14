@@ -1,7 +1,10 @@
 import spacy
 
-# Load spaCy model once
-nlp = spacy.load("en_core_web_sm")
+try:
+    spacy.load("en_core_web_sm")
+except OSError:
+    from spacy.cli import download
+    download("en_core_web_sm")
 
 intent_keywords = {
     "check_balance": ["balance", "how much", "show funds", "available money"],
