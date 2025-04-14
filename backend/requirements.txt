@@ -1,12 +1,12 @@
 annotated-types==0.7.0
 anyio==4.9.0
-bcrypt==4.3.0
+bcrypt==4.3.0  # Keeping latest over 4.1.2
 cffi==1.17.1
 click==8.1.8
 colorama==0.4.6
 cryptography==44.0.2
 ecdsa==0.19.1
-fastapi==0.115.11
+fastapi==0.115.11  # Keeping your existing version over 0.115.1
 greenlet==3.1.1
 h11==0.14.0
 idna==3.10
@@ -24,4 +24,5 @@ SQLAlchemy==2.0.39
 starlette==0.46.1
 typing_extensions==4.12.2
 uvicorn==0.34.0
-python-dotenv
+python-dotenv==1.0.1
+spacy==3.7.4
