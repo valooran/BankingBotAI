@@ -1,0 +1,20 @@
+# 🔐 Environment variables (global)
+**/.env
+**/.env.*
+
+# 🐍 Python
+**/__pycache__/
+**/*.py[cod]
+**/.venv/
+**/venv/
+
+# 📦 Node (Angular frontend)
+**/node_modules/
+**/dist/
+**/.angular/
+
+# 📁 IDE/OS
+.vscode/
+*.log
+.DS_Store
+Thumbs.db
