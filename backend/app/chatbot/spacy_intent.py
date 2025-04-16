@@ -14,25 +14,24 @@ intent_keywords = {
     "transfer_money": ["transfer", "send", "move money", "send funds"],
     "view_transactions": ["transactions", "recent activity", "history", "statement"],
     "greeting": ["hi", "hello", "hey"],
-    "goodbye": ["bye", "goodbye", "see you"]
+    "goodbye": ["bye", "goodbye", "see you"],
+    "bot_capabilities": ["what can you do", "help", "your features", "your services", "show features"],
+    "create_account": ["open account", "create account", "new account", "start account"]
 }
 
 def detect_intent(message: str) -> str:
-    message = message.lower().strip()
-    doc = nlp(message)
+    doc = nlp(message.lower())
     text = doc.text
 
-    # Step 1: Check full match for greetings
-    if re.fullmatch(r"(hi|hello|hey)", message):
-        return "greeting"
-
-    # Step 2: Match keywords per intent (prioritized order)
+    # 1. First pass: Exact keyword match
     for intent, keywords in intent_keywords.items():
-        if intent == "greeting":
-            continue  # already handled
         for keyword in keywords:
-            if re.search(rf"\b{re.escape(keyword)}\b", text):
+            if keyword in text:
                 return intent
+
+    # 2. Second pass: Fuzzy matching
+    for intent, keywords in intent_keywords.items():
+        for keyword in keywords:
             if fuzz.partial_ratio(keyword, text) > 85:
                 return intent
 

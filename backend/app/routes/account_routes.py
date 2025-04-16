@@ -3,11 +3,12 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.account import Account
 from app.models.user import User
-from app.models.schemas import AccountCreate, FundTransfer
+from app.models.schemas import AccountCreate, FundTransfer, AccountResponse
 from jose import jwt, JWTError
 from app.auth import SECRET_KEY, ALGORITHM
 from app.models.transaction import Transaction
 from datetime import datetime
+import random
 
 router = APIRouter(prefix="/api/account", tags=["Account"])
 
@@ -26,22 +27,20 @@ def get_user_id_from_token(token: str, db: Session):
         raise HTTPException(status_code=401, detail="Token error")
 
 # Create account
-@router.post("/create")
-def create_account(account_data: AccountCreate, token: str = Header(...), db: Session = Depends(get_db)):
+@router.post("/create", response_model=AccountResponse)
+def create_account(account: AccountCreate, db: Session = Depends(get_db), token: str = Header(...)):
     user_id = get_user_id_from_token(token, db)
-    import random
-    acc_number = str(random.randint(1000000000, 9999999999))
-
-    new_acc = Account(
+    
+    new_account = Account(
         user_id=user_id,
-        account_number=acc_number,
-        account_type=account_data.account_type,
-        balance=0.0
+        account_number = generate_unique_account_number(db),
+        account_type=account.account_type.lower(),
+        balance=account.initial_deposit
     )
-    db.add(new_acc)
+    db.add(new_account)
     db.commit()
-    db.refresh(new_acc)
-    return new_acc
+    db.refresh(new_account)
+    return new_account
 
 # Get account summary
 @router.get("/summary")
@@ -116,3 +115,9 @@ def get_transactions(
         "transactions": transactions
     }
 
+def generate_unique_account_number(db: Session) -> int:
+    while True:
+        account_number = random.randint(1000000000, 9999999999)
+        existing = db.query(Account).filter_by(account_number=account_number).first()
+        if not existing:
+            return account_number

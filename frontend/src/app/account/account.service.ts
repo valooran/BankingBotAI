@@ -15,12 +15,6 @@ export class AccountService {
     return new HttpHeaders().set('token', token ? token : '');
   }
 
-  createAccount(accountType: string) {
-    return this.http.post(`${this.apiUrl}/create`, { account_type: accountType }, {
-      headers: this.getHeaders()
-    });
-  }
-
   getSummary() {
     return this.http.get(`${this.apiUrl}/summary`, {
       headers: this.getHeaders()
@@ -42,6 +36,15 @@ export class AccountService {
     return this.http.get(`${this.apiUrl}/transactions`, {
       headers: this.getHeaders(),
       params
-  });
+    });
+  }
+
+  createAccount(accountType: string, initialDeposit: number) {
+    return this.http.post(`${this.apiUrl}/create`, {
+      account_type: accountType,
+      initial_deposit: initialDeposit
+    }, {
+      headers: this.getHeaders()
+    });
   }
 }
