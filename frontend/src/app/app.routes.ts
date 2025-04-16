@@ -17,7 +17,8 @@ export const routes: Routes = [
   { path: 'chat', component: ChatWindowComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'transactions', component: TransactionHistoryComponent, canActivate: [AuthGuard] }
+  { path: 'transactions', component: TransactionHistoryComponent, canActivate: [AuthGuard] },
+  { path: 'register', component: RegisterComponent },
 ];
 
 @NgModule({

@@ -1,8 +1,23 @@
-<nav *ngIf="showNav()" class="bg-blue-600 text-white p-4 flex gap-4">
+<!-- Navigation Bar -->
+<nav *ngIf="showNav()" class="bg-blue-600 text-white px-6 py-3 flex justify-between items-center shadow-md">
+  <!-- Left Navigation Links -->
+  <div class="flex gap-6 items-center">
+    <span class="text-lg font-semibold tracking-wide">🏦 ABC BANK</span>
     <a class="cursor-pointer hover:underline" [routerLink]="['/dashboard']">Dashboard</a>
     <a class="cursor-pointer hover:underline" [routerLink]="['/transfer']">Transfer</a>
-    <a routerLink="/transactions" class="cursor-pointer hover:underline">Transactions</a>
-    <a class="cursor-pointer hover:underline" (click)="logout()">Logout</a>
-  </nav>
+    <a class="cursor-pointer hover:underline" [routerLink]="['/transactions']">Transactions</a>
+  </div>
+
+  <!-- Right Logout -->
+  <div>
+    <button (click)="logout()" class="bg-white text-blue-600 hover:bg-blue-100 px-4 py-1.5 rounded shadow-sm transition-all">
+      Logout
+    </button>
+  </div>
+</nav>
+
+<!-- Router View -->
 <router-outlet></router-outlet>
+
+<!-- Chat Widget -->
 <app-chat-window *ngIf="auth.isLoggedIn()"></app-chat-window>

@@ -25,6 +25,7 @@ export class AppComponent {
   }
 
   showNav(): boolean {
-    return this.router.url !== '/login';
+    const route = this.router.url;
+    return !['/login', '/register'].includes(route);
   }
 }

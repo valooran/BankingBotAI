@@ -1,1 +1,31 @@
-<p>register works!</p>
+<div class="min-h-screen flex items-center justify-start bg-cover bg-center px-8" style="background-image: url('/assets/bank-bg.jpg');">
+    <div class="max-w-md w-full ml-20 bg-white/20 backdrop-blur-md border border-white/30 shadow-xl p-8 rounded-xl text-center">
+      <h2 class="text-2xl font-semibold text-white mb-6">Create an Account</h2>
+  
+      <form [formGroup]="registerForm" (ngSubmit)="register()">
+        <input type="email" formControlName="email" placeholder="Email"
+          class="w-full p-2 mb-2 border rounded bg-white/70 text-black placeholder-gray-600">
+        <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="text-red-300 text-sm mb-2">
+          Valid email is required.
+        </div>
+  
+        <input type="password" formControlName="password" placeholder="Password"
+          class="w-full p-2 mb-2 border rounded bg-white/70 text-black placeholder-gray-600">
+        <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="text-red-300 text-sm mb-2">
+          Password must be at least 6 characters.
+        </div>
+  
+        <input type="password" formControlName="confirmPassword" placeholder="Confirm Password"
+          class="w-full p-2 mb-2 border rounded bg-white/70 text-black placeholder-gray-600">
+        <div *ngIf="registerForm.hasError('mismatch') && registerForm.get('confirmPassword')?.touched" class="text-red-300 text-sm mb-2">
+          Passwords do not match.
+        </div>
+  
+        <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition-all">Register</button>
+      </form>
+  
+      <p *ngIf="errorMessage" class="text-red-200 text-sm mt-3">{{ errorMessage }}</p>
+      <p *ngIf="successMessage" class="text-green-200 text-sm mt-3">{{ successMessage }}</p>
+    </div>
+  </div>
+  

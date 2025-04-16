@@ -1,8 +1,8 @@
-<!-- Toggle button -->
+<!-- Toggle Button -->
 <div class="fixed bottom-4 right-4 z-50">
   <button
     (click)="toggleChat()"
-    class="bg-blue-600 text-white p-3 rounded-full shadow-lg"
+    class="bg-blue-600 text-white p-3 rounded-full shadow-lg hover:scale-105 transition-transform"
     aria-label="Chat"
   >
     💬
@@ -12,34 +12,41 @@
 <!-- Chat Window -->
 <div
   *ngIf="isOpen"
-  class="fixed bottom-20 right-4 z-50 bg-white border rounded-lg shadow-lg w-80 max-h-[32rem] flex flex-col"
+  class="fixed bottom-20 right-4 z-50 w-80 max-h-[32rem] flex flex-col
+         bg-white/30 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl"
 >
-  <div class="bg-blue-600 text-white px-4 py-2 font-bold rounded-t-lg">
-    🧠 Banking Assistant
+  <!-- Header -->
+  <div class="bg-blue-600 text-white px-4 py-2 font-bold rounded-t-2xl flex items-center gap-2">
+    🧠 <span>Banking Assistant</span>
   </div>
 
-  <div class="flex-1 overflow-y-auto p-3">
-    <div *ngFor="let msg of messages" class="mb-2">
-      <div class="font-semibold">{{ msg.sender }}</div>
+  <!-- Messages -->
+  <div class="flex-1 overflow-y-auto p-3 space-y-2 text-sm text-gray-800">
+    <div *ngFor="let msg of messages" class="bg-white/60 rounded-md px-3 py-2 shadow">
+      <div class="font-semibold text-blue-700">{{ msg.sender }}</div>
       <div>{{ msg.text }}</div>
     </div>
   </div>
 
-  <div class="flex items-center p-2 border-t">
+  <!-- Input -->
+  <div class="flex items-center p-2 border-t border-white/20 bg-white/40 rounded-b-2xl">
     <input
       [(ngModel)]="userInput"
       (keydown.enter)="sendMessage()"
-      class="flex-1 border rounded p-1 mr-2"
+      class="flex-1 p-2 rounded-lg border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
       placeholder="Ask me something..."
     />
-    <button (click)="sendMessage()" class="bg-blue-600 text-white px-3 py-1 rounded">
+    <button
+      (click)="sendMessage()"
+      class="ml-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+    >
       Send
     </button>
   </div>
-  <div class="flex justify-between items-center mt-2 px-2">
-    <small class="text-gray-500">Chat is private to your session</small>
-    <button class="text-blue-500 hover:underline text-sm" (click)="clearMessages()">
-      Clear Chat
-    </button>
+
+  <!-- Footer -->
+  <div class="flex justify-between items-center px-3 py-1 text-xs text-gray-600 bg-white/30">
+    <span>Chat is private to your session</span>
+    <button (click)="clearMessages()" class="text-blue-500 hover:underline">Clear Chat</button>
   </div>
 </div>

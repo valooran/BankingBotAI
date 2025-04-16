@@ -6,9 +6,10 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from app.models.account import Account
 from app.models.transaction import Transaction
-from app.chatbot.faq import get_faq_response
+from app.chatbot.faq import get_faq_response, faq_responses
 from app.chatbot.parser import extract_transfer_details
 from app.chatbot.spacy_parser import extract_entities_spacy
+from app.chatbot.sentiment_analyzer import analyze_sentiment
 
 router = APIRouter(prefix="/api/chat", tags=["Auth", "Chatbot"])
 class ChatRequest(BaseModel):
@@ -18,6 +19,8 @@ class ChatResponse(BaseModel):
     reply: str
 
 PENDING_TRANSFERS = {}
+PENDING_FAQ_SUGGESTIONS = {}
+PENDING_ESCALATIONS = {} 
 
 @router.post("/", response_model=ChatResponse)
 def chat_endpoint(
@@ -27,12 +30,31 @@ def chat_endpoint(
 ):
     user_id = get_user_id_from_token(token, db)
     message = request.message.strip()
+    sentiment = analyze_sentiment(message)
+    if sentiment == "negative":
+        PENDING_ESCALATIONS[user_id] = True
+        return {"reply": "I'm sensing some frustration. Would you like to speak with an agent?"}
     
     confirmation_phrases = ["yes", "confirm", "go ahead", "please do", "proceed"]
     cancel_phrases = ["no", "cancel", "nevermind", "stop"]
-
-    # Check if user is responding to a pending transfer
+    
+    
     if message.lower() in confirmation_phrases:
+    # ✅ Handle pending FAQ confirmation
+        pending_faq = PENDING_FAQ_SUGGESTIONS.get(user_id)
+        if pending_faq:
+            PENDING_FAQ_SUGGESTIONS.pop(user_id, None)
+            return {"reply": faq_responses.get(pending_faq, "Hmm, I couldn’t find that answer anymore.")}
+        
+        if user_id in PENDING_ESCALATIONS:
+            PENDING_ESCALATIONS.pop(user_id)
+            return {"reply": "I've forwarded your request. An agent will contact you shortly via email or phone. Is there anything else I can help you with in the meantime?"}
+
+        if user_id in PENDING_ESCALATIONS:
+            PENDING_ESCALATIONS.pop(user_id)
+            return {"reply": "No problem! I'm here if you need anything else."}
+        
+        # ✅ Handle pending Transfer confirmation
         pending = PENDING_TRANSFERS.get(user_id)
         if pending and pending.get("intent") == "transfer_money":
             amount = pending.get("amount")
@@ -41,27 +63,34 @@ def chat_endpoint(
 
             if not all([from_acc, to_acc]):
                 return {"reply": "Please specify both source and destination accounts."}
-
             if amount is None:
                 return {"reply": "How much would you like to transfer?"}
 
-            # amount is known — proceed
             PENDING_TRANSFERS.pop(user_id)
             return perform_transfer(user_id, from_acc, to_acc, amount, db)
 
-        return {"reply": "I don’t have a pending transfer to confirm."}
+        return {"reply": "🤔 I don’t have anything to confirm right now."}
 
-    # Cancel if user says no
     if message.lower() in cancel_phrases:
+        cancelled = False
+
+        if user_id in PENDING_FAQ_SUGGESTIONS:
+            PENDING_FAQ_SUGGESTIONS.pop(user_id, None)
+            cancelled = True
+
         if user_id in PENDING_TRANSFERS:
             PENDING_TRANSFERS.pop(user_id, None)
-            return {"reply": "Transfer cancelled."}
-        else:
-            return {"reply": "There is no transfer to cancel."}
+            cancelled = True
+
+        return {"reply": "❌ Action cancelled." if cancelled else "There is no pending action to cancel."}
     
     #checking for FAQ match
-    faq_reply = get_faq_response(message)
+    faq_reply, suggested_question = get_faq_response(message)
     if faq_reply:
+        if suggested_question:  # It's a suggestion
+            PENDING_FAQ_SUGGESTIONS[user_id] = suggested_question
+        else:
+            PENDING_FAQ_SUGGESTIONS.pop(user_id, None)
         return {"reply": faq_reply}
     
     #entity recognition - rule based parsing

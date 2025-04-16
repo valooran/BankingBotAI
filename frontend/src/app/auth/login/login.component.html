@@ -1,9 +1,18 @@
-<div class="max-w-md mx-auto mt-10 p-4 shadow-md bg-white rounded">
-    <h2 class="text-xl font-bold mb-4">Login</h2>
+<div class="min-h-screen flex items-center justify-start bg-cover bg-center px-8" style="background-image: url('/assets/bank-bg.jpg');">
+  <div class="max-w-md w-full ml-20 bg-white/20 backdrop-blur-md border border-white/30 shadow-xl p-8 rounded-xl text-center">
+    <img src="/assets/logo.png" alt="Bank Logo" class="mx-auto w-14 h-14 mb-4 rounded-full bg-white p-1">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Welcome</h2>
+    
     <form (submit)="login()">
-      <input class="w-full p-2 mb-2 border" type="email" [(ngModel)]="email" name="email" placeholder="Email">
-      <input class="w-full p-2 mb-4 border" type="password" [(ngModel)]="password" name="password" placeholder="Password">
-      <button class="bg-blue-600 text-white px-4 py-2 w-full rounded" type="submit">Login</button>
+      <input class="w-full p-2 mb-3 border border-gray-300 rounded bg-white/70 text-black placeholder-gray-600" type="email" [(ngModel)]="email" name="email" placeholder="Email">
+      <input class="w-full p-2 mb-4 border border-gray-300 rounded bg-white/70 text-black placeholder-gray-600" type="password" [(ngModel)]="password" name="password" placeholder="Password">
+      <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition-all">Login</button>
+      <p class="text-sm text-white mt-4">
+        Don’t have an account?
+        <a routerLink="/register" class="text-blue-300 hover:underline">Register</a>
+      </p>
     </form>
+
+    <p class="text-sm italic text-white mt-4">"Banking made simple, secure, and smart."</p>
   </div>
-  
+</div>
