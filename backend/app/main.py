@@ -4,10 +4,14 @@ from app.routes import auth_routes, account_routes, chat_routes
 
 app = FastAPI()
 
+origins = [
+    "http://localhost:4200", 
+    "https://banking-bot-ai.vercel.app"
+]
 # CORS – allows Angular to call backend from a different port
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:4200"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
